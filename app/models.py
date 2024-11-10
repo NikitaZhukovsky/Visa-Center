@@ -21,6 +21,7 @@ class Application(models.Model):
     STATUSES = (
         ('In processing', 'In processing'),
         ('Approved', 'Approved'),
+        ('Rejected', 'Rejected')
     )
     submission_date = models.DateTimeField(blank=False, null=False, default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUSES, blank=False, null=False)
