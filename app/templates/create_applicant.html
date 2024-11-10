@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <h2>New Application</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" name="first_name" class="form-control" id="first_name">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <textarea name="last_name" class="form-control" id="last_name" ></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <textarea name="email" class="form-control" id="email" ></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <textarea name="phone" class="form-control" id="phone" ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="doc_type">Document Type</label>
+                    <input type="text" name="doc_type" class="form-control" id="doc_type">
+                </div>
+                <div class="form-group">
+                    <label for="file">Upload Document</label>
+                    <input type="file" name="file" id="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+<style>
+    .form-control {
+        max-height: 40px;
+    }
+</style>
+{% endblock %}
