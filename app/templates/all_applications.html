@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+        {% if applications %}
+            <h1>{{ applications.count }} Current Application{{ applications.count|pluralize }}</h1>
+            <div class="list-group">
+                {% for application in applications %}
+                    <div class="list-group-item">
+
+                        <b>Status:</b> {{ application.status }}<br>
+                        <b>Submitted on:</b> {{ application.submission_date|date:"F j, Y" }}<br>
+                        <b>Applicant:</b> {{ application.applicant }}<br>
+                        {% if application.documents %}
+                            <b>Document:</b> {{ application.documents.doc_type }}<br>
+                        {% endif %}
+                        <hr>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center">
+                <h2>Looks like you don't have any applications!</h2>
+                <br>
+                <a role="button" class="btn btn-primary" href="{% url 'application' %}">New Application</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

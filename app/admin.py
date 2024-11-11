@@ -13,7 +13,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ['id', 'doc_type', 'file', 'application']
+    list_display = ['id', 'doc_type', 'file',]
 
 
 class PaymentAdmin(admin.ModelAdmin):

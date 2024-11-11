@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from app.forms import ApplicantForm, DocumentForm
+from app.models import Application
 
 
 def home(request):
@@ -19,7 +20,7 @@ def signup_user(request):
                 user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
                 user.save()
                 login(request, user)
-                return redirect('home')
+                return redirect('all_applications')
             except IntegrityError:
                 return render(request, 'signup_user.html',
                               {'form': UserCreationForm(), 'error': 'That username has already been taken.'})
@@ -38,7 +39,7 @@ def login_user(request):
                                                        'error': 'Username and password did not match'})
         else:
             login(request, user)
-            return redirect('home')
+            return redirect('all_applications')
 
 
 def create_application(request):
@@ -53,11 +54,18 @@ def create_application(request):
 
         if form.is_valid() and document_form.is_valid():
             new_applicant = form.save(commit=False)
-            new_applicant.user_id = request.user.id
             new_applicant.save()
 
             document = document_form.save(commit=False)
             document.save()
+            new_application = Application(
+                applicant=new_applicant,
+                status='In processing',
+                documents=document,
+                user=request.user
+
+            )
+            new_application.save()
 
             return redirect('home')
         else:
@@ -66,3 +74,8 @@ def create_application(request):
                 'document_form': document_form,
                 'error': 'Bad data passed in'
             })
+
+
+def all_applications(request):
+    applications = Application.objects.filter(user=request.user)
+    return render(request, 'all_applications.html', {'applications': applications})

@@ -28,7 +28,8 @@ urlpatterns = [
     path('login/', views.login_user, name='login_user'),
 
     path('home/', views.home, name='home'),
-    path('create/', views.create_application, name='application')
+    path('create/', views.create_application, name='application'),
+    path('applications/', views.all_applications, name='all_applications')
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
