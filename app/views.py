@@ -3,12 +3,12 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
-from app.forms import ApplicantForm, DocumentForm
-from app.models import Application
+from app.forms import ApplicantForm, DocumentForm, DocumentFormSet
+from app.models import Application, DocumentApplication, Document
 
 
 def home(request):
-    return render(request, template_name='home.html')
+    return render(request, 'home.html')
 
 
 def signup_user(request):
@@ -46,36 +46,45 @@ def create_application(request):
     if request.method == 'GET':
         return render(request, 'create_applicant.html', {
             'form': ApplicantForm(),
-            'document_form': DocumentForm()
         })
     else:
         form = ApplicantForm(request.POST)
-        document_form = DocumentForm(request.POST, request.FILES)
 
-        if form.is_valid() and document_form.is_valid():
-            new_applicant = form.save(commit=False)
-            new_applicant.save()
-
-            document = document_form.save(commit=False)
-            document.save()
+        if form.is_valid():
+            new_applicant = form.save()
             new_application = Application(
                 applicant=new_applicant,
                 status='In processing',
-                documents=document,
                 user=request.user
-
             )
             new_application.save()
 
-            return redirect('home')
+            document_count = 0
+            while f'doc_type_{document_count}' in request.POST:
+                doc_type = request.POST.get(f'doc_type_{document_count}')
+                file = request.FILES.get(f'file_{document_count}')
+
+                if doc_type and file:
+                    document = Document(doc_type=doc_type, file=file)
+                    document.save()
+                    DocumentApplication.objects.create(
+                        application=new_application,
+                        document=document
+                    )
+                document_count += 1
+
+            return redirect('all_applications')
         else:
             return render(request, 'create_applicant.html', {
                 'form': form,
-                'document_form': document_form,
                 'error': 'Bad data passed in'
             })
 
 
 def all_applications(request):
-    applications = Application.objects.filter(user=request.user)
+    applications = Application.objects.filter(user=request.user).prefetch_related('documentapplication_set')
+
+    for application in applications:
+        application.documents = application.documentapplication_set.all()
+
     return render(request, 'all_applications.html', {'applications': applications})

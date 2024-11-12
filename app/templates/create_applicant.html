@@ -1,52 +1,126 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
-            <h2>New Application</h2>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 text-center">
+            <h2 class="text-primary">New Application</h2>
+            <p class="text-muted">Please fill in the details below to submit your application.</p>
         </div>
     </div>
-    <div class="row justify-content-center mt-5">
+
+    <div class="row justify-content-center">
         <div class="col-md-5">
             {% if error %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
             {% endif %}
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow border">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="first_name">First Name</label>
-                    <input type="text" name="first_name" class="form-control" id="first_name">
+                    <input type="text" name="first_name" class="form-control" id="first_name" required>
                 </div>
                 <div class="form-group">
                     <label for="last_name">Last Name</label>
-                    <textarea name="last_name" class="form-control" id="last_name" ></textarea>
+                    <input type="text" name="last_name" class="form-control" id="last_name" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <textarea name="email" class="form-control" id="email" ></textarea>
+                    <input type="email" name="email" class="form-control" id="email" required>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <textarea name="phone" class="form-control" id="phone" ></textarea>
+                    <input type="tel" name="phone" class="form-control" id="phone" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="doc_type">Document Type</label>
-                    <input type="text" name="doc_type" class="form-control" id="doc_type">
+                <div id="documents-container">
+                    <div class="document-form">
+                        <div class="form-group">
+                            <label for="doc_type_0">Document Type</label>
+                            <input type="text" name="doc_type_0" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file_0">Upload Document</label>
+                            <div class="custom-file">
+                                <input type="file" name="file_0" class="custom-file-input" id="file_0" required>
+                                <label class="custom-file-label" for="file_0">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="file">Upload Document</label>
-                    <input type="file" name="file" id="file">
+
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="button" id="add-document" class="btn btn-secondary btn-sm mx-1">Add Another Document</button>
+                    <button type="submit" class="btn btn-primary btn-sm mx-1">Save</button>
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
             </form>
+
+            <script>
+                let documentCount = 1;
+
+                document.getElementById('add-document').addEventListener('click', function() {
+                    const container = document.getElementById('documents-container');
+
+                    const newDocumentForm = document.createElement('div');
+                    newDocumentForm.classList.add('document-form');
+                    newDocumentForm.innerHTML = `
+                        <div class="form-group">
+                            <label for="doc_type_${documentCount}">Document Type</label>
+                            <input type="text" name="doc_type_${documentCount}" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file_${documentCount}">Upload Document</label>
+                            <div class="custom-file">
+                                <input type="file" name="file_${documentCount}" class="custom-file-input" id="file_${documentCount}" required>
+                                <label class="custom-file-label" for="file_${documentCount}">Choose file</label>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(newDocumentForm);
+                    documentCount++;
+                });
+
+                document.addEventListener('change', function(e) {
+                    if (e.target.matches('.custom-file-input')) {
+                        const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
+                        const label = e.target.nextElementSibling;
+                        label.textContent = fileName;
+                    }
+                });
+            </script>
+
+            <style>
+                body {
+                    background-color: #f8f9fa; /* Light background for the whole page */
+                }
+                .form-control {
+                    max-height: 40px;
+                }
+                .custom-file-input:lang(en) ~ .custom-file-label::after {
+                    content: "Browse";
+                }
+                .btn {
+                    width: auto;
+                    padding: 0.5rem 1rem; /* Comfortable padding */
+                }
+                .d-flex {
+                    margin-top: 20px;
+                }
+                .alert {
+                    margin-bottom: 20px; /* Space below alert */
+                }
+                h2 {
+                    font-weight: bold; /* Bold title */
+                }
+                .border {
+                    border: 1px solid #dee2e6; /* Light border around the form */
+                }
+            </style>
         </div>
     </div>
-<style>
-    .form-control {
-        max-height: 40px;
-    }
-</style>
+</div>
+
 {% endblock %}
