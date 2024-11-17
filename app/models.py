@@ -18,8 +18,13 @@ class Applicant(models.Model):
 
 
 class Document(models.Model):
+    DOCUMENT_TYPES = (
+        ('Passport', 'Passport'),
+        ('Photo', 'Photo'),
+        ('Travel Insurance', 'Travel Insurance')
+    )
     id = models.AutoField(primary_key=True)
-    doc_type = models.CharField(max_length=100, blank=False, null=False)
+    doc_type = models.CharField(choices=DOCUMENT_TYPES, max_length=100, blank=False, null=False)
     file = models.FileField(upload_to='documents/')
 
     def __str__(self):
@@ -40,7 +45,7 @@ class Application(models.Model):
                                    related_name='application_payment')
     operator = models.OneToOneField('Operator', on_delete=models.CASCADE, null=True, blank=True,
                                     related_name='application_operator')
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='applicant', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications', null=True, blank=True)
 
     def __str__(self):
         return f"Application {self.id} - Status: {self.status}"
@@ -53,10 +58,15 @@ class DocumentApplication(models.Model):
 
 
 class Payment(models.Model):
+    PAYMENT_STATUSES = (
+        ('Pending', 'Pending'),
+        ('Completed', 'Completed'),
+        ('Failed', 'Failed'),
+    )
     id = models.AutoField(primary_key=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField(auto_now_add=True)
-    status = models.CharField(max_length=50, blank=False, null=False)
+    status = models.CharField(choices=PAYMENT_STATUSES, max_length=50, blank=False, null=False)
     application = models.OneToOneField(Application, on_delete=models.CASCADE,
                                        related_name='payment_details')
 

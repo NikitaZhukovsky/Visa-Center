@@ -12,6 +12,7 @@
 
     <div class="row justify-content-center">
         <div class="col-md-5">
+
             {% if error %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
@@ -21,32 +22,56 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="first_name">First Name</label>
-                    <input type="text" name="first_name" class="form-control" id="first_name" required>
+                    <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" required>
+                    {% for error in form.first_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="form-group">
                     <label for="last_name">Last Name</label>
-                    <input type="text" name="last_name" class="form-control" id="last_name" required>
+                    <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" required>
+                    {% for error in form.last_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" name="email" class="form-control" id="email" required>
+                    <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" required>
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <input type="tel" name="phone" class="form-control" id="phone" required>
+                    <input type="tel" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="phone" required>
+                    {% for error in form.phone.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <div id="documents-container">
                     <div class="document-form">
                         <div class="form-group">
                             <label for="doc_type_0">Document Type</label>
-                            <input type="text" name="doc_type_0" class="form-control" required>
+                            <select name="doc_type_0" class="form-control {% if form.doc_type_0.errors %}is-invalid{% endif %}" required>
+                                <option value="">Select Document Type</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Photo">Photo</option>
+                                <option value="Travel Insurance">Travel Insurance</option>
+
+                            </select>
+                            {% for error in form.doc_type_0.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
                         </div>
                         <div class="form-group">
                             <label for="file_0">Upload Document</label>
                             <div class="custom-file">
-                                <input type="file" name="file_0" class="custom-file-input" id="file_0" required>
+                                <input type="file" name="file_0" class="custom-file-input {% if form.file_0.errors %}is-invalid{% endif %}" id="file_0" required>
                                 <label class="custom-file-label" for="file_0">Choose file</label>
+                                {% for error in form.file_0.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -69,7 +94,13 @@
                     newDocumentForm.innerHTML = `
                         <div class="form-group">
                             <label for="doc_type_${documentCount}">Document Type</label>
-                            <input type="text" name="doc_type_${documentCount}" class="form-control" required>
+                            <select name="doc_type_${documentCount}" class="form-control" required>
+                                <option value="">Select Document Type</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Photo">Photo</option>
+                                <option value="Travel Insurance">Travel Insurance</option>
+                                <!-- Add more options as needed -->
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="file_${documentCount}">Upload Document</label>

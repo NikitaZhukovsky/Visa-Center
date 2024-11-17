@@ -38,12 +38,22 @@
     {% endif %}
 
     <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'login_user' %}" onclick="$('#signOutBtn').click()" class="nav-link">Logout</a>
+                    <form style='display: none;' method="POST" action="{% url 'logout_user' %}">
+                        {% csrf_token %}
+                        <button id="signOutBtn" type="submit">Logout</button>
+                    </form>
+                </li>
+            {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'signup_user' %}">Sign Up</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login_user' %}">Login</a>
                 </li>
+            {% endif %}
         </ul>
     </div>
 </div>
