@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h2 class="text-primary">Payment for Application #{{ application.id }}</h2>
+            <p class="text-muted">Please enter your payment details below.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-3" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <form method="POST" class="bg-light p-4 rounded shadow border">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="amount">Payment Amount</label>
+                    <input type="number" name="amount" class="form-control" id="amount" step="0.01" required placeholder="Enter amount">
+                </div>
+
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" name="card_number" class="form-control" id="cardNumber" placeholder="Card Number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardName">Cardholder Name</label>
+                    <input type="text" name="card_name" class="form-control" id="cardName" placeholder="Cardholder Name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="text" name="expiry_date" class="form-control" id="expiryDate" placeholder="MM/YY" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cvv">CVV</label>
+                        <input type="text" name="cvv" class="form-control" id="cvv" placeholder="CVV" required>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="submit" class="btn btn-success btn-lg">Submit Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa; /* Light background for the whole page */
+    }
+    .form-control {
+        max-height: 40px;
+    }
+    .btn {
+        width: auto;
+        padding: 0.5rem 1rem; /* Comfortable padding */
+    }
+    .d-flex {
+        margin-top: 20px;
+    }
+    .alert {
+        margin-bottom: 20px; /* Space below alert */
+    }
+    h2 {
+        font-weight: bold; /* Bold title */
+    }
+    .border {
+        border: 1px solid #dee2e6; /* Light border around the form */
+    }
+    .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+</style>
+
+{% endblock %}

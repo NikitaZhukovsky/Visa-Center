@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 text-center">
+            <h2 class="text-primary">New Application</h2>
+            <p class="text-muted">Please fill in the details below to submit your application.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow border">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" name="first_name" class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" id="first_name" required>
+                    {% for error in form.first_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" name="last_name" class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" id="last_name" required>
+                    {% for error in form.last_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" required>
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" name="phone" class="form-control {% if form.phone.errors %}is-invalid{% endif %}" id="phone" required>
+                    {% for error in form.phone.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div id="documents-container">
+                    <div class="document-form">
+                        <div class="form-group">
+                            <label for="doc_type_0">Document Type</label>
+                            <select name="doc_type_0" class="form-control {% if form.doc_type_0.errors %}is-invalid{% endif %}" required>
+                                <option value="">Select Document Type</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Photo">Photo</option>
+                                <option value="Travel Insurance">Travel Insurance</option>
+
+                            </select>
+                            {% for error in form.doc_type_0.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="file_0">Upload Document</label>
+                            <div class="custom-file">
+                                <input type="file" name="file_0" class="custom-file-input {% if form.file_0.errors %}is-invalid{% endif %}" id="file_0" required>
+                                <label class="custom-file-label" for="file_0">Choose file</label>
+                                {% for error in form.file_0.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-3">
+                    <button type="button" id="add-document" class="btn btn-secondary btn-sm mx-1">Add Another Document</button>
+                    <button type="submit" class="btn btn-primary btn-sm mx-1">Save</button>
+                </div>
+            </form>
+
+            <script>
+                let documentCount = 1;
+
+                document.getElementById('add-document').addEventListener('click', function() {
+                    const container = document.getElementById('documents-container');
+
+                    const newDocumentForm = document.createElement('div');
+                    newDocumentForm.classList.add('document-form');
+                    newDocumentForm.innerHTML = `
+                        <div class="form-group">
+                            <label for="doc_type_${documentCount}">Document Type</label>
+                            <select name="doc_type_${documentCount}" class="form-control" required>
+                                <option value="">Select Document Type</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Photo">Photo</option>
+                                <option value="Travel Insurance">Travel Insurance</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="file_${documentCount}">Upload Document</label>
+                            <div class="custom-file">
+                                <input type="file" name="file_${documentCount}" class="custom-file-input" id="file_${documentCount}" required>
+                                <label class="custom-file-label" for="file_${documentCount}">Choose file</label>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(newDocumentForm);
+                    documentCount++;
+                });
+
+                document.addEventListener('change', function(e) {
+                    if (e.target.matches('.custom-file-input')) {
+                        const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
+                        const label = e.target.nextElementSibling;
+                        label.textContent = fileName;
+                    }
+                });
+            </script>
+
+            <style>
+                body {
+                    background-color: #f8f9fa; /* Light background for the whole page */
+                }
+                .form-control {
+                    max-height: 40px;
+                }
+                .custom-file-input:lang(en) ~ .custom-file-label::after {
+                    content: "Browse";
+                }
+                .btn {
+                    width: auto;
+                    padding: 0.5rem 1rem; /* Comfortable padding */
+                }
+                .d-flex {
+                    margin-top: 20px;
+                }
+                .alert {
+                    margin-bottom: 20px; /* Space below alert */
+                }
+                h2 {
+                    font-weight: bold; /* Bold title */
+                }
+                .border {
+                    border: 1px solid #dee2e6; /* Light border around the form */
+                }
+            </style>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

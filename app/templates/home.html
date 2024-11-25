@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row py-5 custom-rounded">
+        <div class="col text-center">
+            <h1 class="display-4 text-black">Welcome to the Visa Center</h1>
+            <p class="lead text-black">Your gateway to seamless visa applications and support.</p>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row my-5">
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Easy Applications</h5>
+                    <p class="card-text">Fill out our simple forms and submit your application in minutes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Real-time Updates</h5>
+                    <p class="card-text">Stay informed with real-time status updates on your application.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Expert Support</h5>
+                    <p class="card-text">Our team is here to assist you every step of the way.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="row bg-light py-4 border border-secondary rounded custom-shadow mb-4">
+        <div class="col text-center">
+            <h2>Ready to Apply?</h2>
+            <p>Start your journey with us today!</p>
+            <a href="{% url 'application' %}" class="btn btn-primary btn-lg">Start Application</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-rounded {
+        border-radius: 10px; /* Adjust the value as needed */
+    }
+    .custom-shadow {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Custom shadow */
+    }
+</style>
+
+<!-- Footer -->
+
+{% endblock %}
