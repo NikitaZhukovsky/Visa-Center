@@ -49,3 +49,57 @@ def test_create_application_post_invalid(client):
     assert not response.context['form'].is_valid()
     assert 'Bad data passed in' in response.context['error']
 
+
+@pytest.mark.django_db
+def test_signup_user_success(client):
+    response = client.post(reverse('signup_user'), {
+        'username': 'testuser',
+        'password1': 'password123',
+        'password2': 'password123'
+    })
+    assert response.status_code == 302
+    assert User.objects.filter(username='testuser').exists()
+    assert response.url == reverse('home')
+
+
+@pytest.mark.django_db
+def test_signup_user_passwords_dont_match(client):
+    response = client.post(reverse('signup_user'), {
+        'username': 'testuser',
+        'password1': 'password123',
+        'password2': 'differentpassword'
+    })
+    assert response.status_code == 200
+    assert 'Passwords did not match' in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_login_user_success(client):
+    User.objects.create_user(username='testuser', password='password123')
+    response = client.post(reverse('login_user'), {
+        'username': 'testuser',
+        'password': 'password123'
+    })
+    assert response.status_code == 302
+    assert response.url == reverse('home')
+
+
+@pytest.mark.django_db
+def test_login_user_invalid_credentials(client):
+    User.objects.create_user(username='testuser', password='password123')
+    response = client.post(reverse('login_user'), {
+        'username': 'testuser',
+        'password': 'wrongpassword'
+    })
+    assert response.status_code == 200
+    assert 'Username and password did not match' in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_logout_user(client):
+    user = User.objects.create_user(username='testuser', password='password123')
+    client.login(username='testuser', password='password123')
+    response = client.post(reverse('logout_user'))
+    assert response.status_code == 302
+    assert response.url == reverse('login_user')
+    assert '_auth_user_id' not in client.session
