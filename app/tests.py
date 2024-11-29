@@ -1,7 +1,8 @@
 import pytest
 from django.urls import reverse
 from django.contrib.auth.models import User
-from app.models import Applicant, Application, Document, DocumentApplication
+from django.contrib.messages import get_messages
+from app.models import Applicant, Application, Document, DocumentApplication, Payment
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
@@ -103,3 +104,109 @@ def test_logout_user(client):
     assert response.status_code == 302
     assert response.url == reverse('login_user')
     assert '_auth_user_id' not in client.session
+
+
+@pytest.mark.django_db
+def test_all_applications_view(client):
+    user = User.objects.create_user(username='testuser', password='testpassword')
+    client.login(username='testuser', password='testpassword')
+
+    applicant = Applicant.objects.create(
+        first_name='John',
+        last_name='Doe',
+        email='john.doe@example.com',
+        phone='+1234567890'
+    )
+
+    application = Application.objects.create(
+        applicant=applicant,
+        status='In processing',
+        user=user
+    )
+
+    Payment.objects.create(
+        amount=100.00,
+        status='Completed',
+        application=application
+    )
+
+    document = Document.objects.create(
+        doc_type='Passport',
+        file='documents/passport.pdf'
+    )
+
+    DocumentApplication.objects.create(
+        application=application,
+        document=document
+    )
+
+    response = client.get(reverse('all_applications'))
+
+    assert response.status_code == 200
+
+    assert len(response.context['applications']) == 1
+
+
+@pytest.mark.django_db
+def test_payment_view_success(client):
+    user = User.objects.create_user(username='testuser', password='testpassword')
+    client.login(username='testuser', password='testpassword')
+
+    applicant = Applicant.objects.create(
+        first_name='John',
+        last_name='Doe',
+        email='john.doe@example.com',
+        phone='1234567890'
+    )
+    application = Application.objects.create(
+        applicant=applicant,
+        status='In processing',
+        user=user
+    )
+
+    response = client.post(reverse('payment', args=[application.id]), data={
+        'amount': 100.00,
+        'status': 'Pending'
+    })
+
+    payment = Payment.objects.get(application=application)
+    assert payment.status == 'Pending'
+    assert payment.amount == 100.00
+
+    assert response.status_code == 302
+    assert response.url == reverse('all_applications')
+
+    messages = list(get_messages(response.wsgi_request))
+    assert len(messages) == 1
+    assert messages[0].message == "Payment successful!"
+
+
+@pytest.mark.django_db
+def test_payment_view_already_paid(client):
+
+    user = User.objects.create_user(username='testuser', password='testpassword')
+    client.login(username='testuser', password='testpassword')
+
+    applicant = Applicant.objects.create(
+        first_name='John',
+        last_name='Doe',
+        email='john.doe@example.com',
+        phone='1234567890'
+    )
+    application = Application.objects.create(
+        applicant=applicant,
+        status='In processing',
+        user=user
+    )
+
+    Payment.objects.create(
+        application=application,
+        amount=100.00,
+        status='Completed'
+    )
+
+    response = client.post(reverse('payment', args=[application.id]))
+
+    assert response.status_code == 200
+
+
