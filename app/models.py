@@ -43,8 +43,6 @@ class Application(models.Model):
     applicant = models.OneToOneField(Applicant, on_delete=models.CASCADE, related_name='application')
     payment = models.OneToOneField('Payment', on_delete=models.CASCADE, null=True, blank=True,
                                    related_name='application_payment')
-    operator = models.OneToOneField('Operator', on_delete=models.CASCADE, null=True, blank=True,
-                                    related_name='application_operator')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applications', null=True, blank=True)
 
     def __str__(self):
@@ -73,24 +71,3 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment {self.id} - Amount: {self.amount}"
 
-
-class Operator(models.Model):
-    id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=50, blank=False, null=False)
-    last_name = models.CharField(max_length=50, blank=False, null=False)
-    email = models.EmailField(max_length=100, blank=False, null=False)
-    access_level = models.CharField(max_length=50, blank=False, null=False)
-
-    def __str__(self):
-        return f"Operator {self.id} - {self.first_name} {self.last_name}"
-
-
-class Administrator(models.Model):
-    id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=50, blank=False, null=False)
-    last_name = models.CharField(max_length=50, blank=False, null=False)
-    email = models.EmailField(max_length=100, blank=False, null=False)
-    access_level = models.CharField(max_length=50, blank=False, null=False)
-
-    def __str__(self):
-        return f"Administrator {self.id} - {self.first_name} {self.last_name}"
